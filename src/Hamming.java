@@ -12,66 +12,66 @@ public class Hamming {
 		
 		System.out.println("Envie sua mensagem em bits");
 		System.out.println("Exemplo: 100100101");
-		String mensagem = input.next();
-		char[] mensagemInvertida = mensagem.toCharArray();
-		char[] mensagemCerta = new char[mensagem.length()];
-		for(int i=0, j = mensagem.length()-1;i<mensagem.length();i++, j--) {
-			mensagemCerta[j] = mensagemInvertida[i];
+		String mensagemString = input.next();
+		char[] mensagemInvertida = mensagemString.toCharArray();
+		char[] mensagem = new char[mensagemString.length()];
+		for(int i=0, j = mensagemString.length()-1;i<mensagemString.length();i++, j--) {
+			mensagem[j] = mensagemInvertida[i];
 		}
 		
-		int posicaoBinaria = 1, cnt = 0, cntPosicaoBinaria = 0;
-		int[] bit1 = new int[50];
+		int posicaoBinaria = 1, contadorPosicoes = 0, contadorPosicaoBinaria = 0;
+		int[] numeroDaPosicao = new int[50];
 		
-		for(int i=0;i<mensagem.length();i++) {
+		for(int i=0;i<mensagemString.length();i++) {
 			if((i+1)==posicaoBinaria) {
 				posicaoBinaria*=2;
-				cntPosicaoBinaria++;
+				contadorPosicaoBinaria++;
 			}
 		}
 		posicaoBinaria = 1;
-		char[] mensagemTransmissao = new char[mensagem.length()+cntPosicaoBinaria];
-		for(int i=0, j=0;i<mensagem.length()+cntPosicaoBinaria;i++) {
+		char[] mensagemTransmissao = new char[mensagemString.length()+contadorPosicaoBinaria];
+		for(int i=0, j=0;i<mensagemString.length()+contadorPosicaoBinaria;i++) {
 			if((i+1)==posicaoBinaria) {
 				mensagemTransmissao[i] = ' ';
 				posicaoBinaria*=2;
 			}else{
-				mensagemTransmissao[i] = mensagemCerta[j];
+				mensagemTransmissao[i] = mensagem[j];
 				j++;
 			}
 		}
 		
-		for(int i=0;i<mensagem.length()+cntPosicaoBinaria;i++) {
+		for(int i=0;i<mensagemString.length()+contadorPosicaoBinaria;i++) {
 			if(mensagemTransmissao[i]=='1') {
-				bit1[cnt] = i+1;
-				cnt++;
+				numeroDaPosicao[contadorPosicoes] = i+1;
+				contadorPosicoes++;
 			}
 		}
 		
-		int[][] matriz = new int[cnt][cntPosicaoBinaria];
+		int[][] tabelaHamming = new int[contadorPosicoes][contadorPosicaoBinaria];
 		int resto;
 		
-		for(int i=0;i<cnt;i++) {
-			int manoseila=cntPosicaoBinaria-1;
-			while(bit1[i] !=1 && bit1[i] !=0) {
-				resto = bit1[i] % 2;
-				bit1[i] /= 2;
-				matriz[i][manoseila] = resto;
-				manoseila--;
+		for(int i=0;i<contadorPosicoes;i++) {
+			int indicador=contadorPosicaoBinaria-1;
+			while(numeroDaPosicao[i] !=1 && numeroDaPosicao[i] !=0) {
+				resto = numeroDaPosicao[i] % 2;
+				numeroDaPosicao[i] /= 2;
+				tabelaHamming[i][indicador] = resto;
+				indicador--;
 			}
-			matriz[i][manoseila] = bit1[i];
-			manoseila--;
-			if(manoseila>=0) {
-				for(int j=manoseila;j<0;j--) {
-					matriz[i][j] = 0;
+			tabelaHamming[i][indicador] = numeroDaPosicao[i];
+			indicador--;
+			if(indicador>=0) {
+				for(int j=indicador;j<0;j--) {
+					tabelaHamming[i][j] = 0;
 				}
 			}
 			
 		}
-		int[] xor = new int[cntPosicaoBinaria];
-		for(int i=0;i<cntPosicaoBinaria;i++) {
+		int[] xor = new int[contadorPosicaoBinaria];
+		for(int i=0;i<contadorPosicaoBinaria;i++) {
 			int sum = 0;
-			for(int j=0;j<cnt;j++) {
-				if(matriz[j][i]==1) {
+			for(int j=0;j<contadorPosicoes;j++) {
+				if(tabelaHamming[j][i]==1) {
 					sum++;
 				}
 			}
@@ -81,64 +81,64 @@ public class Hamming {
 				xor[i]=1;
 			}
 		}
-		int cntBool = cntPosicaoBinaria-1;
-		for(int i=0;i<mensagem.length()+cntPosicaoBinaria;i++) {
+		int indicadorDoXor = contadorPosicaoBinaria-1;
+		for(int i=0;i<mensagemString.length()+contadorPosicaoBinaria;i++) {
 			if(mensagemTransmissao[i]==' ') {
-				if(xor[cntBool]==1) {
+				if(xor[indicadorDoXor]==1) {
 					mensagemTransmissao[i]='1';
 				}else {
 					mensagemTransmissao[i]='0';
 				}
-				cntBool--;
+				indicadorDoXor--;
 			}
 		}
 		System.out.print("Mensagem transmitida: ");
-		for(int i=mensagem.length()+cntPosicaoBinaria-1;i>=0;i--) {
+		for(int i=mensagemString.length()+contadorPosicaoBinaria-1;i>=0;i--) {
 			System.out.print(mensagemTransmissao[i]);
 		}
 		System.out.println();
 		System.out.println("Mensagem recebida");
-		String mensagemRecebida = input.next();
-		char[] mensagemRInvertida = mensagemRecebida.toCharArray();
-		char[] mensagemRCerta = new char[mensagemRecebida.length()];
-		for(int i=0, j = mensagemRecebida.length()-1;i<mensagemRecebida.length();i++, j--) {
-			mensagemRCerta[j] = mensagemRInvertida[i];
+		String mensagemRecebidaString = input.next();
+		char[] mensagemRInvertida = mensagemRecebidaString.toCharArray();
+		char[] mensagemRecebida = new char[mensagemRecebidaString.length()];
+		for(int i=0, j = mensagemRecebidaString.length()-1;i<mensagemRecebidaString.length();i++, j--) {
+			mensagemRecebida[j] = mensagemRInvertida[i];
 		}
 
-		int cntRecebido = 0;
-		int[] bit1Recebido = new int[50];
-		for(int i=0;i<mensagemRecebida.length();i++) {
-			if(mensagemRCerta[i]=='1') {
-				bit1Recebido[cntRecebido] = i+1;
-				cntRecebido++;
+		int contadorPosicoesRecebido = 0;
+		int[] numeroDaPosicaoRecebido = new int[50];
+		for(int i=0;i<mensagemRecebidaString.length();i++) {
+			if(mensagemRecebida[i]=='1') {
+				numeroDaPosicaoRecebido[contadorPosicoesRecebido] = i+1;
+				contadorPosicoesRecebido++;
 			}
 		}
 		
-		int[][] matrizRecebido = new int[cntRecebido][cntPosicaoBinaria];
+		int[][] tabelaHammingRecebido = new int[contadorPosicoesRecebido][contadorPosicaoBinaria];
 		int restoRecebido;
 		
-		for(int i=0;i<cntRecebido;i++) {
-			int manoseila=cntPosicaoBinaria-1;
-			while(bit1Recebido[i] !=1 && bit1Recebido[i] !=0) {
-				restoRecebido = bit1Recebido[i] % 2;
-				bit1Recebido[i] /= 2;
-				matrizRecebido[i][manoseila] = restoRecebido;
-				manoseila--;
+		for(int i=0;i<contadorPosicoesRecebido;i++) {
+			int indicador=contadorPosicaoBinaria-1;
+			while(numeroDaPosicaoRecebido[i] !=1 && numeroDaPosicaoRecebido[i] !=0) {
+				restoRecebido = numeroDaPosicaoRecebido[i] % 2;
+				numeroDaPosicaoRecebido[i] /= 2;
+				tabelaHammingRecebido[i][indicador] = restoRecebido;
+				indicador--;
 			}
-			matrizRecebido[i][manoseila] = bit1Recebido[i];
-			manoseila--;
-			if(manoseila>=0) {
-				for(int j=manoseila;j<0;j--) {
-					matrizRecebido[i][j] = 0;
+			tabelaHammingRecebido[i][indicador] = numeroDaPosicaoRecebido[i];
+			indicador--;
+			if(indicador>=0) {
+				for(int j=indicador;j<0;j--) {
+					tabelaHammingRecebido[i][j] = 0;
 				}
 			}
 			
 		}
-		int[] xorRecebido = new int[cntPosicaoBinaria];
-		for(int i=0;i<cntPosicaoBinaria;i++) {
+		int[] xorRecebido = new int[contadorPosicaoBinaria];
+		for(int i=0;i<contadorPosicaoBinaria;i++) {
 			int sum = 0;
-			for(int j=0;j<cntRecebido;j++) {
-				if(matrizRecebido[j][i]==1) {
+			for(int j=0;j<contadorPosicoesRecebido;j++) {
+				if(tabelaHammingRecebido[j][i]==1) {
 					sum++;
 				}
 			}
@@ -148,12 +148,12 @@ public class Hamming {
 				xorRecebido[i]=1;
 			}
 		}
-		int[] xorCerto = new int[cntPosicaoBinaria];
-		for(int i=0, j=cntPosicaoBinaria-1;i<cntPosicaoBinaria;i++, j--) {
+		int[] xorCerto = new int[contadorPosicaoBinaria];
+		for(int i=0, j=contadorPosicaoBinaria-1;i<contadorPosicaoBinaria;i++, j--) {
 			xorCerto[j] = xorRecebido[i];
 		}
 		int soma = 0;
-		for(int i=0;i<cntPosicaoBinaria;i++) {
+		for(int i=0;i<contadorPosicaoBinaria;i++) {
 			if(xorCerto[i]==1) {
 				soma+=Math.pow(2, i);
 			}
